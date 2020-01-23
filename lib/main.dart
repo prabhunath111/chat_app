@@ -1,3 +1,9 @@
+import 'package:path/path.dart' as path;
+import 'package:http/http.dart' as http;
+import 'package:image/image.dart' as img;
+import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:keyboard_visibility/keyboard_visibility.dart';
 import 'package:emoji_picker/emoji_picker.dart';
 import 'package:flutter/material.dart';
@@ -16,6 +22,11 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  File imageFile;
+  static const baseUrl = 'http://192.168.29.152:9000';
+
+
   SocketIO socket;
   TextEditingController _textEditingController = new TextEditingController();
   ScrollController _scrollController = new ScrollController();
@@ -195,7 +206,7 @@ class _HomePageState extends State<HomePage> {
                       fit: BoxFit.cover)),
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 60.0),
-                child: ListView.builder(
+                child: imageFile==null?ListView.builder(
 
                   shrinkWrap: true,
                   controller: _scrollController,
@@ -219,7 +230,7 @@ class _HomePageState extends State<HomePage> {
                       onTap: () {},
                     );
                   },
-                ),
+                ):Image.file(imageFile, fit: BoxFit.cover),
               ),
             ),
           ),
@@ -253,6 +264,8 @@ class _HomePageState extends State<HomePage> {
                             setState(() {
                               FocusScope.of(context)
                                   .requestFocus(new FocusNode());
+                              _selectGalleryImage();
+
                             });
                           }),
 
@@ -312,4 +325,67 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+
+  _uploadImage() async {
+    if (imageFile == null) {
+//      return _showSnackbar('Please select image');
+    return ;
+    }
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return new Center(
+          child: new CircularProgressIndicator(),
+        );
+      },
+      barrierDismissible: false,
+    );
+
+    try {
+      final url = Uri.parse('$baseUrl/upload');
+      final fileName = path.basename(imageFile.path);
+      final bytes = await compute(compress, imageFile.readAsBytesSync());
+
+      var request = http.MultipartRequest('POST', url)
+        ..files.add(
+          new http.MultipartFile.fromBytes(
+            'image',
+            bytes,
+            filename: fileName,
+          ),
+        );
+
+      var response = await request.send();
+      var decoded = await response.stream.bytesToString().then(json.decode);
+//      Navigator.pop(context);
+      if (response.statusCode == HttpStatus.OK) {
+        print('image URL = $baseUrl/${decoded['path']}');
+        sendingTextMessage= '$baseUrl/${decoded['path']}';
+//        sendMessage('$baseUrl/${decoded['path']}');
+//        _showSnackbar('Image uploaded, imageUrl = $baseUrl/${decoded['path']}');
+      } else {
+//        _showSnackbar('Image failed: ${decoded['message']}');
+      }
+    } catch (e) {
+      print('e2e $e');
+//      Navigator.pop(context);
+//      _showSnackbar('Image failed: $e');
+    }
+  }
+
+  _selectGalleryImage() async {
+    imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+
+    });
+  }
+
+
+}
+
+List<int> compress(List<int> bytes) {
+  var image = img.decodeImage(bytes);
+  var resize = img.copyResize(image, width: 480);
+  return img.encodePng(resize, level: 1);
 }
