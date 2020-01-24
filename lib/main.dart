@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
   SocketIO socket;
   TextEditingController _textEditingController = new TextEditingController();
   ScrollController _scrollController = new ScrollController();
-  String sendingTextMessage;
+  String sendingMessage;
   bool isEmojiKeyboard = false;
 
   List<String> sentOrReceiveMessages = [];
@@ -117,12 +117,10 @@ class _HomePageState extends State<HomePage> {
   sendMessage(identifier) {
     if (sockets[identifier] != null) {
       pprint("sending message from '$identifier'...");
-      sockets[identifier].emit("chat", [
-        sendingTextMessage,
-      ]);
-      sentOrReceiveMessages.add(sendingTextMessage);
+      sockets[identifier].emit("chat", [sendingMessage,]);
+      sentOrReceiveMessages.add(sendingMessage);
       setState(() {
-        sendingTextMessage = '';
+        sendingMessage = '';
         _textEditingController.clear();
         _scrollToBottom();
       });
@@ -206,7 +204,9 @@ class _HomePageState extends State<HomePage> {
                       fit: BoxFit.cover)),
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 60.0),
-                child: imageFile==null?ListView.builder(
+                child:
+                imageFile==null?
+                ListView.builder(
 
                   shrinkWrap: true,
                   controller: _scrollController,
@@ -230,7 +230,18 @@ class _HomePageState extends State<HomePage> {
                       onTap: () {},
                     );
                   },
-                ):Image.file(imageFile, fit: BoxFit.cover),
+                )
+                    :Column(
+                  children: <Widget>[
+                    Image.file(imageFile, fit: BoxFit.cover),
+                    IconButton(icon: Icon(Icons.send), onPressed: (){
+                      _uploadImage();
+                    },
+                    color: Colors.blue,
+                      iconSize: 72,
+                    )
+                  ],
+                ),
               ),
             ),
           ),
@@ -269,33 +280,35 @@ class _HomePageState extends State<HomePage> {
                             });
                           }),
 
-                      Container(
-                        width: MediaQuery.of(context).size.width - 96,
-                        child: TextField(
-                          focusNode: myFocusNode,
-                          decoration: InputDecoration(
-                            suffixIcon: IconButton(
-                              icon: Icon(Icons.send),
-                              onPressed: ipc
-                                  ? () {
-                                if (sendingTextMessage.isNotEmpty) {
-                                  FocusScope.of(context).requestFocus(myFocusNode);
-                                  return sendMessage('default');
+                      Expanded(
+                        child: Container(
+                          width: MediaQuery.of(context).size.width,
+                          child: TextField(
+                            focusNode: myFocusNode,
+                            decoration: InputDecoration(
+                              suffixIcon: IconButton(
+                                icon: Icon(Icons.send),
+                                onPressed: ipc
+                                    ? () {
+                                  if (sendingMessage.isNotEmpty) {
+                                    FocusScope.of(context).requestFocus(myFocusNode);
+                                     return sendMessage('default');
+                                  }
                                 }
-                              }
-                                  : null,
+                                    : null,
+                              ),
+                              border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10.0)),
+                              hintText: 'Type a message',
+                              hintStyle: TextStyle(color: Colors.black26),
                             ),
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0)),
-                            hintText: 'Type a message',
-                            hintStyle: TextStyle(color: Colors.black26),
+                            onChanged: (text) {
+                              sendingMessage = text;
+                            },
+                            textInputAction: TextInputAction.send,
+                            style: TextStyle(color: Colors.black),
+                            controller: _textEditingController,
                           ),
-                          onChanged: (text) {
-                            sendingTextMessage = text;
-                          },
-                          textInputAction: TextInputAction.send,
-                          style: TextStyle(color: Colors.black),
-                          controller: _textEditingController,
                         ),
                       ),
                     ],
@@ -312,7 +325,7 @@ class _HomePageState extends State<HomePage> {
                   onEmojiSelected: (emoji, category) {
                     print('EMOJI $emoji');
                     setState(() {
-                      sendingTextMessage =
+                      sendingMessage =
                           _textEditingController.text += emoji.toString();
                     });
                   },
@@ -339,7 +352,7 @@ class _HomePageState extends State<HomePage> {
           child: new CircularProgressIndicator(),
         );
       },
-      barrierDismissible: false,
+      barrierDismissible: true,
     );
 
     try {
@@ -361,7 +374,9 @@ class _HomePageState extends State<HomePage> {
 //      Navigator.pop(context);
       if (response.statusCode == HttpStatus.OK) {
         print('image URL = $baseUrl/${decoded['path']}');
-        sendingTextMessage= '$baseUrl/${decoded['path']}';
+        sendingMessage= '$baseUrl/${decoded['path']}';
+        sendMessage('default');
+
 //        sendMessage('$baseUrl/${decoded['path']}');
 //        _showSnackbar('Image uploaded, imageUrl = $baseUrl/${decoded['path']}');
       } else {
