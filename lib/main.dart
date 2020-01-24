@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:adhara_socket_io/adhara_socket_io.dart';
 
-const String URI = "http://192.168.29.152:5000/";
+const String URI = "http://192.168.31.94:5000/";
 
 void main() => runApp(MaterialApp(
   home: HomePage(),
@@ -24,7 +24,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   File imageFile;
-  static const baseUrl = 'http://192.168.29.152:9000';
+  static const baseUrl = 'http://192.168.31.94:9000';
 
 
   SocketIO socket;
@@ -205,7 +205,7 @@ class _HomePageState extends State<HomePage> {
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 60.0),
                 child:
-                imageFile==null?
+//                imageFile==null?
                 ListView.builder(
 
                   shrinkWrap: true,
@@ -231,17 +231,12 @@ class _HomePageState extends State<HomePage> {
                     );
                   },
                 )
-                    :Column(
-                  children: <Widget>[
-                    Image.file(imageFile, fit: BoxFit.cover),
-                    IconButton(icon: Icon(Icons.send), onPressed: (){
-                      _uploadImage();
-                    },
-                    color: Colors.blue,
-                      iconSize: 72,
-                    )
-                  ],
-                ),
+//                    :Column(
+//                  children: <Widget>[
+//                    Image.file(imageFile, fit: BoxFit.cover),
+//
+//                  ],
+//                ),
               ),
             ),
           ),
@@ -374,6 +369,8 @@ class _HomePageState extends State<HomePage> {
 //      Navigator.pop(context);
       if (response.statusCode == HttpStatus.OK) {
         print('image URL = $baseUrl/${decoded['path']}');
+        print('image response = $decoded');
+
         sendingMessage= '$baseUrl/${decoded['path']}';
         sendMessage('default');
 
@@ -392,7 +389,7 @@ class _HomePageState extends State<HomePage> {
   _selectGalleryImage() async {
     imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
-
+     _uploadImage();
     });
   }
 
