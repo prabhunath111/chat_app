@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:adhara_socket_io/adhara_socket_io.dart';
 
-const String URI = "http://192.168.31.94:5000/";
+const String URI = "http://192.168.29.152:5000/";
 
 void main() => runApp(MaterialApp(
   home: HomePage(),
@@ -24,7 +24,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   File imageFile;
-  static const baseUrl = 'http://192.168.31.94:9000';
+  static const baseUrl = 'http://192.168.29.152:9000';
 
 
   SocketIO socket;
@@ -32,7 +32,9 @@ class _HomePageState extends State<HomePage> {
   ScrollController _scrollController = new ScrollController();
   String sendingMessage;
   bool isEmojiKeyboard = false;
+  bool isImageUrl=true;
 
+  var decodedUrl;
   List<String> sentOrReceiveMessages = [];
   List<String> toPrint = ["trying to connect"];
   SocketIOManager manager;
@@ -118,6 +120,7 @@ class _HomePageState extends State<HomePage> {
     if (sockets[identifier] != null) {
       pprint("sending message from '$identifier'...");
       sockets[identifier].emit("chat", [sendingMessage,]);
+       isImageUrl = sendingMessage.contains('http');
       sentOrReceiveMessages.add(sendingMessage);
       setState(() {
         sendingMessage = '';
@@ -155,6 +158,29 @@ class _HomePageState extends State<HomePage> {
   }
 
   listTile(String sentOrReceiveMessages, int index) {
+    if(isImageUrl){
+    return Container(
+      decoration: BoxDecoration(
+          borderRadius: (index % 2 == 0)
+              ? BorderRadius.only(
+              bottomLeft: Radius.circular(10.0),
+              bottomRight: Radius.circular(10.0),
+              topRight: Radius.circular(10.0))
+              : BorderRadius.only(
+              topLeft: Radius.circular(10.0),
+              bottomLeft: Radius.circular(10.0),
+              bottomRight: Radius.circular(10.0)),
+          color: (index % 2 != 0) ? Colors.white : Colors.blue),
+      child: Padding(
+        padding:
+        const EdgeInsets.only(right: 8.0, top: 8.0, bottom: 8.0, left: 8.0),
+        child: Image.network('http://192.168.29.152:9000${decodedUrl['url']}'),
+      ),
+    );
+
+    }else
+      {
+        isImageUrl=false;
     return Container(
       decoration: BoxDecoration(
           borderRadius: (index % 2 == 0)
@@ -173,6 +199,7 @@ class _HomePageState extends State<HomePage> {
         child: Text(sentOrReceiveMessages),
       ),
     );
+      }
   }
 
   @override
@@ -365,13 +392,13 @@ class _HomePageState extends State<HomePage> {
         );
 
       var response = await request.send();
-      var decoded = await response.stream.bytesToString().then(json.decode);
+       decodedUrl = await response.stream.bytesToString().then(json.decode);
 //      Navigator.pop(context);
       if (response.statusCode == HttpStatus.OK) {
-        print('image URL = $baseUrl/${decoded['path']}');
-        print('image response = $decoded');
+        print('image URL = $baseUrl/${decodedUrl['path']}');
+        print('image response = ${decodedUrl['url']}');
 
-        sendingMessage= '$baseUrl/${decoded['path']}';
+        sendingMessage= '$baseUrl/${decodedUrl['path']}';
         sendMessage('default');
 
 //        sendMessage('$baseUrl/${decoded['path']}');
