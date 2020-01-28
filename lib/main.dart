@@ -100,6 +100,9 @@ class _HomePageState extends State<HomePage> {
     socket.on("chat", (data) {
       var sendOrReceive = new SendOrReceive();
       sendOrReceive.sentOrReceive = data;
+      sendOrReceive.isFileReceive = data.contains('http');
+
+//      sendOrReceive.isSend = false;
       sentOrReceiveMessages.add(sendOrReceive);
       return pprint(data);
     });
@@ -184,7 +187,28 @@ class _HomePageState extends State<HomePage> {
               Image.network('http://192.168.29.152:9000/${decodedUrl['url']}'),
         ),
       );
-    } else {
+    } else if(sentOrReceiveMessages.isFileReceive){
+      return Container(
+        decoration: BoxDecoration(
+            borderRadius: (sentOrReceiveMessages.isFile)
+                ? BorderRadius.only(
+                bottomLeft: Radius.circular(10.0),
+                bottomRight: Radius.circular(10.0),
+                topRight: Radius.circular(10.0))
+                : BorderRadius.only(
+                topLeft: Radius.circular(10.0),
+                bottomLeft: Radius.circular(10.0),
+                bottomRight: Radius.circular(10.0)),
+            color: (sentOrReceiveMessages.isSend) ? Colors.blue : Colors.white),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child:
+          Image.network('http://192.168.29.152:9000/${decodedUrl['url']}'),
+        ),
+      );
+    }
+
+    else {
       isFileUrl = false;
       return Padding(
         padding: (sentOrReceiveMessages.isSend)
@@ -217,7 +241,6 @@ class _HomePageState extends State<HomePage> {
   void dispose() {
     // Clean up the focus node when the Form is disposed.
     myFocusNode.dispose();
-
     super.dispose();
   }
 
