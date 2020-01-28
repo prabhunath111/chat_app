@@ -1,5 +1,5 @@
 class SendOrReceive {
   var sentOrReceive;
-  bool isSend =false;
-  SendOrReceive({this.sentOrReceive,this.isSend});
+  bool isFile = false;
+  bool isSend = false;
 }

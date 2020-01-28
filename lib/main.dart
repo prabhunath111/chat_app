@@ -186,22 +186,28 @@ class _HomePageState extends State<HomePage> {
       );
     } else {
       isImageUrl = false;
-      return Container(
-        decoration: BoxDecoration(
-            borderRadius: (index % 2 == 0)
-                ? BorderRadius.only(
-                    bottomLeft: Radius.circular(10.0),
-                    bottomRight: Radius.circular(10.0),
-                    topRight: Radius.circular(10.0))
-                : BorderRadius.only(
-                    topLeft: Radius.circular(10.0),
-                    bottomLeft: Radius.circular(10.0),
-                    bottomRight: Radius.circular(10.0)),
-            color: (index % 2 != 0) ? Colors.white : Colors.blue),
-        child: Padding(
-          padding: const EdgeInsets.only(
-              right: 8.0, top: 8.0, bottom: 8.0, left: 8.0),
-          child: Text(sentOrReceiveMessages.toString()),
+      return Padding(
+        padding: (sentOrReceiveMessages.isSend)
+            ? EdgeInsets.only(left: 80.0)
+            : EdgeInsets.only(right: 80.0),
+        child: Container(
+          decoration: BoxDecoration(
+              borderRadius: (sentOrReceiveMessages.isSend)
+                  ? BorderRadius.only(
+                      bottomLeft: Radius.circular(10.0),
+                      bottomRight: Radius.circular(10.0),
+                      topRight: Radius.circular(10.0))
+                  : BorderRadius.only(
+                      topLeft: Radius.circular(10.0),
+                      bottomLeft: Radius.circular(10.0),
+                      bottomRight: Radius.circular(10.0)),
+              color:
+                  (sentOrReceiveMessages.isSend) ? Colors.blue : Colors.white),
+          child: Padding(
+            padding: const EdgeInsets.only(
+                right: 8.0, top: 8.0, bottom: 8.0, left: 8.0),
+            child: Text(sentOrReceiveMessages.sentOrReceive),
+          ),
         ),
       );
     }
@@ -236,38 +242,25 @@ class _HomePageState extends State<HomePage> {
                       fit: BoxFit.cover)),
               child: Padding(
                   padding: const EdgeInsets.only(bottom: 60.0),
-                  child:
-//                imageFile==null?
-                      ListView.builder(
+                  child: ListView.builder(
                     shrinkWrap: true,
                     controller: _scrollController,
                     itemCount: sentOrReceiveMessages.length,
                     itemBuilder: (context, index) {
                       return ListTile(
-                        title: Padding(
-                          padding: (index % 2 == 0)
-                              ? const EdgeInsets.only(left: 80.0)
-                              : const EdgeInsets.only(right: 80.0),
-                          child: listTile(
-                              sentOrReceiveMessages[index] != null
-                                  ? sentOrReceiveMessages[index]
-                                  : '',
-                              index),
-                        ),
+                        title: listTile(
+                            sentOrReceiveMessages[index] != null
+                                ? sentOrReceiveMessages[index]
+                                : '',
+                            index),
+
                         // When a user taps the ListTile, navigate to the DetailScreen.
                         // Notice that you're not only creating a DetailScreen, you're
                         // also passing the current todo through to it.
                         onTap: () {},
                       );
                     },
-                  )
-//                    :Column(
-//                  children: <Widget>[
-//                    Image.file(imageFile, fit: BoxFit.cover),
-//
-//                  ],
-//                ),
-                  ),
+                  )),
             ),
           ),
           Column(
