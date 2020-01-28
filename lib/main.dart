@@ -10,6 +10,7 @@ import 'package:emoji_picker/emoji_picker.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:adhara_socket_io/adhara_socket_io.dart';
+import 'package:progress_dialog/progress_dialog.dart';
 
 
 void main() => runApp(MaterialApp(
@@ -22,6 +23,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  ProgressDialog pr;
   File imageFile;
   static const String URI = "http://192.168.29.152:5000/";
   static const baseUrl = 'http://192.168.29.152:9000';
@@ -165,6 +168,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   listTile(var sentOrReceiveMessages, int index) {
+
     if (sentOrReceiveMessages.isFile) {
       return Padding(
         padding: (sentOrReceiveMessages.isFileReceive)?EdgeInsets.only(right:80.0):EdgeInsets.only(left:80.0),
@@ -184,7 +188,7 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.only(
                 right: 8.0, top: 8.0, bottom: 8.0, left: 8.0),
             child:
-                Image.network('http://192.168.29.152:9000/${decodedUrl['url']}'),
+           Image.network('http://192.168.29.152:9000/${decodedUrl['url']}'),
           ),
         ),
       );
@@ -387,6 +391,7 @@ class _HomePageState extends State<HomePage> {
 //      return _showSnackbar('Please select image');
       return;
     }
+
 
     showDialog(
       context: context,

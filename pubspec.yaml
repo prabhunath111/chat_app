@@ -26,6 +26,8 @@ dependencies:
   image_picker:
   http: ^0.12.0+2
   dio:
+  progress_dialog:
+
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
