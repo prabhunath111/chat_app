@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:adhara_socket_io/adhara_socket_io.dart';
 
-const String URI = "http://192.168.29.152:5000/";
 
 void main() => runApp(MaterialApp(
       home: HomePage(),
@@ -24,15 +23,13 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   File imageFile;
+  static const String URI = "http://192.168.29.152:5000/";
   static const baseUrl = 'http://192.168.29.152:9000';
-
   SocketIO socket;
   TextEditingController _textEditingController = new TextEditingController();
   ScrollController _scrollController = new ScrollController();
   var sendingMessage;
   bool isEmojiKeyboard = false;
-  bool isFileUrl = true;
-
   var decodedUrl;
   List<SendOrReceive> sentOrReceiveMessages = [];
   List<String> toPrint = ["trying to connect"];
@@ -45,6 +42,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+
     manager = SocketIOManager();
     initSocket("default");
     myFocusNode = FocusNode();
@@ -168,48 +166,53 @@ class _HomePageState extends State<HomePage> {
 
   listTile(var sentOrReceiveMessages, int index) {
     if (sentOrReceiveMessages.isFile) {
-      return Container(
-        decoration: BoxDecoration(
-            borderRadius: (sentOrReceiveMessages.isFile)
-                ? BorderRadius.only(
-                    bottomLeft: Radius.circular(10.0),
-                    bottomRight: Radius.circular(10.0),
-                    topRight: Radius.circular(10.0))
-                : BorderRadius.only(
-                    topLeft: Radius.circular(10.0),
-                    bottomLeft: Radius.circular(10.0),
-                    bottomRight: Radius.circular(10.0)),
-            color: (sentOrReceiveMessages.isSend) ? Colors.blue : Colors.white),
-        child: Padding(
-          padding: const EdgeInsets.only(
-              right: 8.0, top: 8.0, bottom: 8.0, left: 8.0),
-          child:
-              Image.network('http://192.168.29.152:9000/${decodedUrl['url']}'),
+      return Padding(
+        padding: (sentOrReceiveMessages.isFileReceive)?EdgeInsets.only(right:80.0):EdgeInsets.only(left:80.0),
+        child: Container(
+          decoration: BoxDecoration(
+              borderRadius: (sentOrReceiveMessages.isFile)
+                  ? BorderRadius.only(
+                      bottomLeft: Radius.circular(10.0),
+                      bottomRight: Radius.circular(10.0),
+                      topRight: Radius.circular(10.0))
+                  : BorderRadius.only(
+                      topLeft: Radius.circular(10.0),
+                      bottomLeft: Radius.circular(10.0),
+                      bottomRight: Radius.circular(10.0)),
+              color: (sentOrReceiveMessages.isSend) ? Colors.blue : Colors.white),
+          child: Padding(
+            padding: const EdgeInsets.only(
+                right: 8.0, top: 8.0, bottom: 8.0, left: 8.0),
+            child:
+                Image.network('http://192.168.29.152:9000/${decodedUrl['url']}'),
+          ),
         ),
       );
     } else if(sentOrReceiveMessages.isFileReceive){
-      return Container(
-        decoration: BoxDecoration(
-            borderRadius: (sentOrReceiveMessages.isFile)
-                ? BorderRadius.only(
-                bottomLeft: Radius.circular(10.0),
-                bottomRight: Radius.circular(10.0),
-                topRight: Radius.circular(10.0))
-                : BorderRadius.only(
-                topLeft: Radius.circular(10.0),
-                bottomLeft: Radius.circular(10.0),
-                bottomRight: Radius.circular(10.0)),
-            color: (sentOrReceiveMessages.isSend) ? Colors.blue : Colors.white),
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child:
-          Image.network('http://192.168.29.152:9000/${decodedUrl['url']}'),
+      return Padding(
+        padding: (sentOrReceiveMessages.isFileReceive)?EdgeInsets.only(right:80.0):EdgeInsets.only(left:80.0),
+        child: Container(
+          decoration: BoxDecoration(
+              borderRadius: (sentOrReceiveMessages.isFile)
+                  ? BorderRadius.only(
+                  bottomLeft: Radius.circular(10.0),
+                  bottomRight: Radius.circular(10.0),
+                  topRight: Radius.circular(10.0))
+                  : BorderRadius.only(
+                  topLeft: Radius.circular(10.0),
+                  bottomLeft: Radius.circular(10.0),
+                  bottomRight: Radius.circular(10.0)),
+              color: (sentOrReceiveMessages.isSend) ? Colors.blue : Colors.white),
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child:
+            Image.network('http://192.168.29.152:9000/${decodedUrl['url']}'),
+          ),
         ),
       );
     }
 
     else {
-      isFileUrl = false;
       return Padding(
         padding: (sentOrReceiveMessages.isSend)
             ? EdgeInsets.only(left: 80.0)
