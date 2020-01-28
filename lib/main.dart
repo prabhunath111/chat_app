@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
   ScrollController _scrollController = new ScrollController();
   var sendingMessage;
   bool isEmojiKeyboard = false;
-  bool isImageUrl = true;
+  bool isFileUrl = true;
 
   var decodedUrl;
   List<SendOrReceive> sentOrReceiveMessages = [];
@@ -120,13 +120,13 @@ class _HomePageState extends State<HomePage> {
     var sendOrReceive = new SendOrReceive();
     sendOrReceive.sentOrReceive = sendingMessage;
     sendOrReceive.isSend = true;
+    sendOrReceive.isFile = sendingMessage.contains('http');
 
     if (sockets[identifier] != null) {
       pprint("sending message from '$identifier'...");
       sockets[identifier].emit("chat", [
         sendingMessage,
       ]);
-      isImageUrl = sendingMessage.contains('http');
       sentOrReceiveMessages.add(sendOrReceive);
       setState(() {
         sendingMessage = '';
@@ -164,10 +164,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   listTile(var sentOrReceiveMessages, int index) {
-    if (isImageUrl) {
+    if (sentOrReceiveMessages.isFile) {
       return Container(
         decoration: BoxDecoration(
-            borderRadius: (index % 2 == 0)
+            borderRadius: (sentOrReceiveMessages.isFile)
                 ? BorderRadius.only(
                     bottomLeft: Radius.circular(10.0),
                     bottomRight: Radius.circular(10.0),
@@ -176,7 +176,7 @@ class _HomePageState extends State<HomePage> {
                     topLeft: Radius.circular(10.0),
                     bottomLeft: Radius.circular(10.0),
                     bottomRight: Radius.circular(10.0)),
-            color: (index % 2 != 0) ? Colors.white : Colors.blue),
+            color: (sentOrReceiveMessages.isSend) ? Colors.blue : Colors.white),
         child: Padding(
           padding: const EdgeInsets.only(
               right: 8.0, top: 8.0, bottom: 8.0, left: 8.0),
@@ -185,7 +185,7 @@ class _HomePageState extends State<HomePage> {
         ),
       );
     } else {
-      isImageUrl = false;
+      isFileUrl = false;
       return Padding(
         padding: (sentOrReceiveMessages.isSend)
             ? EdgeInsets.only(left: 80.0)
