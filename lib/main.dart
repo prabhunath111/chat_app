@@ -13,7 +13,6 @@ import 'package:adhara_socket_io/adhara_socket_io.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-
 void main() => runApp(MaterialApp(
       home: HomePage(),
     ));
@@ -24,7 +23,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   ProgressDialog pr;
   File imageFile;
   static const String URI = "http://192.168.29.152:5000/";
@@ -169,10 +167,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   listTile(var sentOrReceiveMessages, int index) {
-
     if (sentOrReceiveMessages.isFile) {
       return Padding(
-        padding: (sentOrReceiveMessages.isFileReceive)?EdgeInsets.only(right:80.0):EdgeInsets.only(left:80.0),
+        padding: (sentOrReceiveMessages.isFileReceive)
+            ? EdgeInsets.only(right: 80.0)
+            : EdgeInsets.only(left: 80.0),
         child: Container(
           decoration: BoxDecoration(
               borderRadius: (sentOrReceiveMessages.isFile)
@@ -184,24 +183,25 @@ class _HomePageState extends State<HomePage> {
                       topLeft: Radius.circular(10.0),
                       bottomLeft: Radius.circular(10.0),
                       bottomRight: Radius.circular(10.0)),
-              color: (sentOrReceiveMessages.isSend) ? Colors.blue : Colors.white),
+              color:
+                  (sentOrReceiveMessages.isSend) ? Colors.blue : Colors.white),
           child: Padding(
             padding: const EdgeInsets.only(
                 right: 8.0, top: 8.0, bottom: 8.0, left: 8.0),
-            child:
-            Stack(
+            child: Stack(
               children: <Widget>[
-                Center(child: CircularProgressIndicator()),
-                Center(child: Image.network('http://192.168.29.152:9000/${decodedUrl['url']}')),
-                /*Center(
-                  child: FadeInImage.memoryNetwork(
-                    placeholder: kTransparentImage,
-                    image: 'http://192.168.29.152:9000/${decodedUrl['url']}',
-//                    image: 'https://picsum.photos/250?image=9',
-//                      Image.network('http://192.168.29.152:9000/${decodedUrl['url']}')
-
-                  ),
-                ),*/
+                Container(
+                  margin: EdgeInsets.all(16.0),
+                  child: Center(
+                      child: CircularProgressIndicator(
+                    strokeWidth: 4.0,
+                    value: 20.0,
+                    backgroundColor: Colors.grey,
+                  )),
+                ),
+                Center(
+                    child: Image.network(
+                        'http://192.168.29.152:9000/${decodedUrl['url']}')),
               ],
             ),
 
@@ -209,31 +209,49 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       );
-    } else if(sentOrReceiveMessages.isFileReceive){
+    } else if (sentOrReceiveMessages.isFileReceive) {
       return Padding(
-        padding: (sentOrReceiveMessages.isFileReceive)?EdgeInsets.only(right:80.0):EdgeInsets.only(left:80.0),
+        padding: (sentOrReceiveMessages.isFileReceive)
+            ? EdgeInsets.only(right: 80.0)
+            : EdgeInsets.only(left: 80.0),
         child: Container(
           decoration: BoxDecoration(
               borderRadius: (sentOrReceiveMessages.isFile)
                   ? BorderRadius.only(
-                  bottomLeft: Radius.circular(10.0),
-                  bottomRight: Radius.circular(10.0),
-                  topRight: Radius.circular(10.0))
+                      bottomLeft: Radius.circular(10.0),
+                      bottomRight: Radius.circular(10.0),
+                      topRight: Radius.circular(10.0))
                   : BorderRadius.only(
-                  topLeft: Radius.circular(10.0),
-                  bottomLeft: Radius.circular(10.0),
-                  bottomRight: Radius.circular(10.0)),
-              color: (sentOrReceiveMessages.isSend) ? Colors.blue : Colors.white),
+                      topLeft: Radius.circular(10.0),
+                      bottomLeft: Radius.circular(10.0),
+                      bottomRight: Radius.circular(10.0)),
+              color:
+                  (sentOrReceiveMessages.isSend) ? Colors.blue : Colors.white),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child:
-            Image.network('http://192.168.29.152:9000/${decodedUrl['url']}'),
+            Stack(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.all(16.0),
+                  child: Center(
+                      child: CircularProgressIndicator(
+                        strokeWidth: 4.0,
+                        value: 20.0,
+                        backgroundColor: Colors.grey,
+                      )),
+                ),
+                Center(
+                    child: Image.network(
+                        'http://192.168.29.152:9000/${decodedUrl['url']}')),
+              ],
+            ),
+//            Image.network(
+//                'http://192.168.29.152:9000/${decodedUrl['url']}'),
           ),
         ),
       );
-    }
-
-    else {
+    } else {
       return Padding(
         padding: (sentOrReceiveMessages.isSend)
             ? EdgeInsets.only(left: 80.0)
@@ -254,7 +272,8 @@ class _HomePageState extends State<HomePage> {
           child: Padding(
             padding: const EdgeInsets.only(
                 right: 8.0, top: 8.0, bottom: 8.0, left: 8.0),
-            child: Text(sentOrReceiveMessages.sentOrReceive),
+            child:
+            Text(sentOrReceiveMessages.sentOrReceive),
           ),
         ),
       );
@@ -409,8 +428,7 @@ class _HomePageState extends State<HomePage> {
       return;
     }
 
-
-   /* showDialog(
+    /* showDialog(
       context: context,
       builder: (BuildContext context) {
         return new Center(
