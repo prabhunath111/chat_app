@@ -188,7 +188,7 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.only(
                 right: 8.0, top: 8.0, bottom: 8.0, left: 8.0),
             child:
-           Image.network('http://192.168.29.152:9000/${decodedUrl['url']}'),
+           Container(child: Image.network('http://192.168.29.152:9000/${decodedUrl['url']}')),
           ),
         ),
       );
