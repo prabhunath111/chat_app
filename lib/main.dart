@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:adhara_socket_io/adhara_socket_io.dart';
 import 'package:progress_dialog/progress_dialog.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 
 void main() => runApp(MaterialApp(
@@ -188,7 +189,23 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.only(
                 right: 8.0, top: 8.0, bottom: 8.0, left: 8.0),
             child:
-           Container(child: Image.network('http://192.168.29.152:9000/${decodedUrl['url']}')),
+            Stack(
+              children: <Widget>[
+                Center(child: CircularProgressIndicator()),
+                Center(child: Image.network('http://192.168.29.152:9000/${decodedUrl['url']}')),
+                /*Center(
+                  child: FadeInImage.memoryNetwork(
+                    placeholder: kTransparentImage,
+                    image: 'http://192.168.29.152:9000/${decodedUrl['url']}',
+//                    image: 'https://picsum.photos/250?image=9',
+//                      Image.network('http://192.168.29.152:9000/${decodedUrl['url']}')
+
+                  ),
+                ),*/
+              ],
+            ),
+
+//           Container(child: Image.network('http://192.168.29.152:9000/${decodedUrl['url']}')),
           ),
         ),
       );
@@ -393,7 +410,7 @@ class _HomePageState extends State<HomePage> {
     }
 
 
-    showDialog(
+   /* showDialog(
       context: context,
       builder: (BuildContext context) {
         return new Center(
@@ -401,7 +418,7 @@ class _HomePageState extends State<HomePage> {
         );
       },
       barrierDismissible: true,
-    );
+    );*/
 
     try {
       final url = Uri.parse('$baseUrl/upload');
