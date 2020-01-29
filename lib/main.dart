@@ -12,6 +12,8 @@ import 'dart:convert';
 import 'package:adhara_socket_io/adhara_socket_io.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:transparent_image/transparent_image.dart';
+import 'package:flutter/services.dart';
+
 
 void main() => runApp(MaterialApp(
       home: HomePage(),
@@ -59,6 +61,7 @@ class _HomePageState extends State<HomePage> {
         print('vis $visible');
       },
     );
+
   }
 
   _scrollToBottom() {
@@ -296,128 +299,136 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: Text('chat'),
       ),
-      body: Stack(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(bottom: 0.0),
-            child: Container(
-              height: MediaQuery.of(context).size.height,
-              decoration: BoxDecoration(
-                  image: DecorationImage(
-                      image: AssetImage('assets/images/wallpaper.png'),
-                      fit: BoxFit.cover)),
-              child: Padding(
-                  padding: const EdgeInsets.only(bottom: 60.0),
-                  child: ListView.builder(
-                    shrinkWrap: true,
-                    controller: _scrollController,
-                    itemCount: sentOrReceiveMessages.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: listTile(
-                            sentOrReceiveMessages[index] != null
-                                ? sentOrReceiveMessages[index]
-                                : '',
-                            index),
+      body: new GestureDetector(
+        onTap: (){
+          FocusScope.of(context).requestFocus(myFocusNode);
+          SystemChannels.textInput.invokeMethod('TextInput.hide');
+        },
+        child: Stack(
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(bottom: 0.0),
+              child: Container(
+                height: MediaQuery.of(context).size.height,
+                decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: AssetImage('assets/images/wallpaper.png'),
+                        fit: BoxFit.cover)),
+                child: Padding(
+                    padding: const EdgeInsets.only(bottom: 60.0),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      controller: _scrollController,
+                      itemCount: sentOrReceiveMessages.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: listTile(
+                              sentOrReceiveMessages[index] != null
+                                  ? sentOrReceiveMessages[index]
+                                  : '',
+                              index),
 
-                        // When a user taps the ListTile, navigate to the DetailScreen.
-                        // Notice that you're not only creating a DetailScreen, you're
-                        // also passing the current todo through to it.
-                        onTap: () {},
-                      );
-                    },
-                  )),
+                          // When a user taps the ListTile, navigate to the DetailScreen.
+                          // Notice that you're not only creating a DetailScreen, you're
+                          // also passing the current todo through to it.
+                          onTap: () {},
+                        );
+                      },
+                    )),
+              ),
             ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: <Widget>[
-              Container(
-                alignment: Alignment.bottomCenter,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                  height: 60.0,
-                  width: MediaQuery.of(context).size.width,
-                  child: Row(
-                    children: <Widget>[
-                      IconButton(
-                          icon: Icon(Icons.insert_emoticon),
-                          onPressed: () {
-                            setState(() {
-                              FocusScope.of(context)
-                                  .requestFocus(new FocusNode());
-                              isEmojiKeyboard = true;
-                            });
-                          }),
-                      IconButton(
-                          icon: Icon(Icons.attach_file),
-                          onPressed: () {
-                            setState(() {
-                              FocusScope.of(context)
-                                  .requestFocus(new FocusNode());
-                              _selectGalleryImage();
-                            });
-                          }),
-                      Expanded(
-                        child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          child: TextField(
-                            focusNode: myFocusNode,
-                            decoration: InputDecoration(
-                              suffixIcon: IconButton(
-                                icon: Icon(Icons.send),
-                                onPressed: ipc
-                                    ? () {
-                                        if (sendingMessage.isNotEmpty) {
-                                          FocusScope.of(context)
-                                              .requestFocus(myFocusNode);
-                                          return sendMessage('default');
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                Container(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10.0),
+                    ),
+                    height: 60.0,
+                    width: MediaQuery.of(context).size.width,
+                    child: Row(
+                      children: <Widget>[
+                        IconButton(
+                            icon: Icon(Icons.insert_emoticon),
+                            onPressed: () {
+                              setState(() {
+                                FocusScope.of(context).requestFocus(new FocusNode());
+                                isEmojiKeyboard = true;
+                              });
+                            }),
+                        IconButton(
+                            icon: Icon(Icons.attach_file),
+                            onPressed: () {
+                              setState(() {
+                                FocusScope.of(context)
+                                    .requestFocus(new FocusNode());
+                                _selectGalleryImage();
+                              });
+                            }),
+                        Expanded(
+                          child: Container(
+                            width: MediaQuery.of(context).size.width,
+                            child: TextField(
+                              focusNode: myFocusNode,
+                              decoration: InputDecoration(
+                                suffixIcon: IconButton(
+                                  icon: Icon(Icons.send),
+                                  onPressed: ipc
+                                      ? () {
+                                          if (sendingMessage.isNotEmpty) {
+                                            setState(() {
+                                              FocusScope.of(context).requestFocus(myFocusNode);
+                                              SystemChannels.textInput.invokeMethod('TextInput.hide');
+
+                                              return sendMessage('default');
+                                            });
+                                          }
                                         }
-                                      }
-                                    : null,
+                                      : null,
+                                ),
+                                border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(10.0)),
+                                hintText: 'Type a message',
+                                hintStyle: TextStyle(color: Colors.black26),
                               ),
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10.0)),
-                              hintText: 'Type a message',
-                              hintStyle: TextStyle(color: Colors.black26),
+                              onChanged: (text) {
+                                sendingMessage = text;
+                              },
+                              textInputAction: TextInputAction.send,
+                              style: TextStyle(color: Colors.black),
+                              controller: _textEditingController,
                             ),
-                            onChanged: (text) {
-                              sendingMessage = text;
-                            },
-                            textInputAction: TextInputAction.send,
-                            style: TextStyle(color: Colors.black),
-                            controller: _textEditingController,
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              isEmojiKeyboard == true
-                  ? Container(
-                      child: EmojiPicker(
-                        rows: 3,
-                        columns: 7,
-                        recommendKeywords: ["racing", "horse"],
-                        numRecommended: 10,
-                        onEmojiSelected: (emoji, category) {
-                          print('EMOJI $emoji');
-                          setState(() {
-                            sendingMessage =
-                                _textEditingController.text += emoji.toString();
-                          });
-                        },
-                      ),
-                    )
-                  : Container(),
-            ],
-          ),
-        ],
+                isEmojiKeyboard == true
+                    ? Container(
+                        child: EmojiPicker(
+                          rows: 3,
+                          columns: 7,
+                          recommendKeywords: ["racing", "horse"],
+                          numRecommended: 10,
+                          onEmojiSelected: (emoji, category) {
+                            print('EMOJI $emoji');
+                            setState(() {
+                              sendingMessage =
+                                  _textEditingController.text += emoji.toString();
+                            });
+                          },
+                        ),
+                      )
+                    : Container(),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -427,16 +438,6 @@ class _HomePageState extends State<HomePage> {
 //      return _showSnackbar('Please select image');
       return;
     }
-
-    /* showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return new Center(
-          child: new CircularProgressIndicator(),
-        );
-      },
-      barrierDismissible: true,
-    );*/
 
     try {
       final url = Uri.parse('$baseUrl/upload');
