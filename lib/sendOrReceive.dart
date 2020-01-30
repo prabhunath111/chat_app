@@ -4,4 +4,5 @@ class SendOrReceive {
   bool isFileReceive = false;
   bool isSend = false;
   bool isShowingDialog =false;
+  static bool isEmoji = false;
 }

@@ -57,7 +57,7 @@ class _HomePageState extends State<HomePage> {
       onChange: (bool visible) {
         if (visible == true) {
           setState(() {
-            isEmojiKeyboard = false;
+            SendOrReceive.isEmoji = false;
           });
         }
         print('vis $visible');
@@ -316,9 +316,11 @@ class _HomePageState extends State<HomePage> {
       ),
       body: new GestureDetector(
         onTap: (){
-//          FocusScope.of(context).requestFocus(myFocusNode);
-          FocusScope.of(context).requestFocus(myFocusNode);
-          SystemChannels.textInput.invokeMethod('TextInput.hide');
+          setState(() {
+            SendOrReceive.isEmoji = false ;
+            SystemChannels.textInput.invokeMethod('TextInput.hide');
+          });
+
         },
         child: Stack(
           children: <Widget>[
@@ -384,7 +386,7 @@ class _HomePageState extends State<HomePage> {
                             onPressed: () {
                               setState(() {
                                 FocusScope.of(context).requestFocus(new FocusNode());
-                                isEmojiKeyboard = true;
+                                SendOrReceive.isEmoji = true ;
                               });
                             }),
                         IconButton(
@@ -435,7 +437,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
-                isEmojiKeyboard == true
+                SendOrReceive.isEmoji == true
                     ? Container(
                         child: EmojiPicker(
                           rows: 3,
