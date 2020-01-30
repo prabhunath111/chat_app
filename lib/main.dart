@@ -13,11 +13,11 @@ import 'package:adhara_socket_io/adhara_socket_io.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:flutter/services.dart';
-
 import 'constantsMenu.dart';
 
 
 void main() => runApp(MaterialApp(
+  debugShowCheckedModeBanner: false,
       home: HomePage(),
     ));
 
@@ -289,7 +289,6 @@ class _HomePageState extends State<HomePage> {
   void dispose() {
     // Clean up the focus node when the Form is disposed.
     myFocusNode.dispose();
-    print('inside dispose');
     super.dispose();
   }
 
@@ -317,6 +316,7 @@ class _HomePageState extends State<HomePage> {
       ),
       body: new GestureDetector(
         onTap: (){
+//          FocusScope.of(context).requestFocus(myFocusNode);
           FocusScope.of(context).requestFocus(myFocusNode);
           SystemChannels.textInput.invokeMethod('TextInput.hide');
         },
@@ -347,7 +347,18 @@ class _HomePageState extends State<HomePage> {
                           // When a user taps the ListTile, navigate to the DetailScreen.
                           // Notice that you're not only creating a DetailScreen, you're
                           // also passing the current todo through to it.
-                          onTap: () {},
+                          onTap: () {
+
+                          },
+                          onLongPress: (){
+                            var alertDialog = AlertDialog(
+                              title: Text("want delete"),
+                              content: Text("Sure!"),
+                            );
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) => alertDialog);
+                          },
                         );
                       },
                     )),
