@@ -14,6 +14,8 @@ import 'package:progress_dialog/progress_dialog.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'package:flutter/services.dart';
 
+import 'constantsMenu.dart';
+
 
 void main() => runApp(MaterialApp(
       home: HomePage(),
@@ -287,6 +289,7 @@ class _HomePageState extends State<HomePage> {
   void dispose() {
     // Clean up the focus node when the Form is disposed.
     myFocusNode.dispose();
+    print('inside dispose');
     super.dispose();
   }
 
@@ -298,6 +301,19 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('chat'),
+        actions: <Widget>[
+          PopupMenuButton<String>(
+            onSelected: choiceAction,
+            itemBuilder: (BuildContext context){
+              return Constants.choices.map((String choice){
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
+                );
+              }).toList();
+            },
+          )
+        ],
       ),
       body: new GestureDetector(
         onTap: (){
@@ -480,6 +496,16 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _uploadImage();
     });
+  }
+
+  void choiceAction(String choice) {
+    if(choice == Constants.settings){
+      print('Settings');
+    }else if(choice == Constants.subscribe){
+      print('Subscribe');
+    }else if(choice == Constants.signOut){
+      print('SignOut');
+    }
   }
 }
 
