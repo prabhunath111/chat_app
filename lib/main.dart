@@ -301,6 +301,7 @@ class _HomePageState extends State<HomePage> {
         title: Text('chat'),
         actions: <Widget>[
           PopupMenuButton<String>(
+            offset: Offset(0.0, 60.0),
             onSelected: choiceAction,
             itemBuilder: (BuildContext context){
               return Constants.choices.map((String choice){
