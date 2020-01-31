@@ -35,7 +35,6 @@ class _HomePageState extends State<HomePage> {
   TextEditingController _textEditingController = new TextEditingController();
   ScrollController _scrollController = new ScrollController();
   var sendingMessage;
-  bool isEmojiKeyboard = false;
   var decodedUrl;
   List<SendOrReceive> sentOrReceiveMessages = [];
   List<String> toPrint = ["trying to connect"];
@@ -320,7 +319,6 @@ class _HomePageState extends State<HomePage> {
             SendOrReceive.isEmoji = false ;
             SystemChannels.textInput.invokeMethod('TextInput.hide');
           });
-
         },
         child: Stack(
           children: <Widget>[
