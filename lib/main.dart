@@ -29,8 +29,12 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   ProgressDialog pr;
   File imageFile;
-  static const String URI = "http://192.168.29.152:5000/";
-  static const baseUrl = 'http://192.168.29.152:9000';
+//  static const String URI = "http://192.168.29.152:5000/";
+//  static const baseUrl = 'http://192.168.29.152:9000';
+
+  static const String URI = "https://prabhu-socket.herokuapp.com/";
+  static const baseUrl = 'https://prabhu-file.herokuapp.com';
+
   SocketIO socket;
   TextEditingController _textEditingController = new TextEditingController();
   ScrollController _scrollController = new ScrollController();
@@ -205,7 +209,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Center(
                     child: Image.network(
-                        'http://192.168.29.152:9000/${decodedUrl['url']}')),
+                        'https://prabhu-file.herokuapp.com/${decodedUrl['url']}')),
               ],
             ),
 
@@ -247,7 +251,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Center(
                     child: Image.network(
-                        'http://192.168.29.152:9000/${decodedUrl['url']}')),
+                        'https://prabhu-file.herokuapp.com/${decodedUrl['url']}')),
               ],
             ),
 //            Image.network(
@@ -299,7 +303,7 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('chat'),
-        actions: <Widget>[
+        /*actions: <Widget>[
           PopupMenuButton<String>(
             offset: Offset(0.0, 60.0),
             onSelected: choiceAction,
@@ -312,7 +316,7 @@ class _HomePageState extends State<HomePage> {
               }).toList();
             },
           )
-        ],
+        ],*/
       ),
       body: new GestureDetector(
         onTap: (){
@@ -388,7 +392,7 @@ class _HomePageState extends State<HomePage> {
                                 SendOrReceive.isEmoji = true ;
                               });
                             }),
-                        IconButton(
+                        /*IconButton(
                             icon: Icon(Icons.attach_file),
                             onPressed: () {
                               setState(() {
@@ -396,7 +400,7 @@ class _HomePageState extends State<HomePage> {
                                     .requestFocus(new FocusNode());
                                 _selectGalleryImage();
                               });
-                            }),
+                            }),*/
                         Expanded(
                           child: Container(
                             width: MediaQuery.of(context).size.width,
@@ -444,10 +448,10 @@ class _HomePageState extends State<HomePage> {
                           recommendKeywords: ["racing", "horse"],
                           numRecommended: 10,
                           onEmojiSelected: (emoji, category) {
-                            print('EMOJI $emoji');
+                            print('EMOJI ${emoji.emoji}');
                             setState(() {
                               sendingMessage =
-                                  _textEditingController.text += emoji.toString();
+                                  _textEditingController.text += emoji.emoji.toString();
                             });
                           },
                         ),
@@ -510,7 +514,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  void choiceAction(String choice) {
+  /*void choiceAction(String choice) {
     if(choice == Constants.settings){
       print('Settings');
     }else if(choice == Constants.subscribe){
@@ -518,7 +522,7 @@ class _HomePageState extends State<HomePage> {
     }else if(choice == Constants.signOut){
       print('SignOut');
     }
-  }
+  }*/
 }
 
 List<int> compress(List<int> bytes) {
