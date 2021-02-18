@@ -1,19 +1,17 @@
 import 'package:multi_image/sendOrReceive.dart';
 import 'package:path/path.dart' as path;
 import 'package:http/http.dart' as http;
-import 'package:image/image.dart' as img;
+// import 'package:image/image.dart' as img;
+// import 'package:image/image.dart';
+import 'package:image_picker/image_picker.dart' as img;
 import 'dart:io';
-import 'package:flutter/foundation.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:keyboard_visibility/keyboard_visibility.dart';
 import 'package:emoji_picker/emoji_picker.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:adhara_socket_io/adhara_socket_io.dart';
 import 'package:progress_dialog/progress_dialog.dart';
-import 'package:transparent_image/transparent_image.dart';
 import 'package:flutter/services.dart';
-import 'constantsMenu.dart';
 
 
 void main() => runApp(MaterialApp(
@@ -107,11 +105,17 @@ class _HomePageState extends State<HomePage> {
     socket.on("type:list", (data) => pprint("type:list | $data"));
     socket.on("chat", (data) {
       var sendOrReceive = new SendOrReceive();
+      var a = sentOrReceiveMessages.last;
+      print(("check a: ${a.sentOrReceive}"));
       sendOrReceive.sentOrReceive = data;
       sendOrReceive.isFileReceive = data.contains('http');
 
 //      sendOrReceive.isSend = false;
-      sentOrReceiveMessages.add(sendOrReceive);
+     /*
+     I am comparing here last msg in db and coming msg from server, is both are same it will not be added
+      This is not a good way but it's temporary ok, i have to fix it ASAP.
+      */
+      sentOrReceiveMessages.add((a.sentOrReceive==sendOrReceive.sentOrReceive)?'':sendOrReceive);
       return pprint(data);
     });
     socket.connect();
@@ -146,21 +150,6 @@ class _HomePageState extends State<HomePage> {
       });
       pprint("Message emitted from '$identifier'...");
     }
-  }
-
-  sendMessageWithACK(identifier) {
-    pprint("Sending ACK message from '$identifier'...");
-    List msg = [
-      "Hello world!",
-      1,
-      true,
-      {"p": 1},
-      [3, 'r']
-    ];
-    sockets[identifier].emitWithAck("ack-message", msg).then((data) {
-      // this callback runs when this specific message is acknowledged by the server
-      pprint("ACK recieved from '$identifier' for $msg: $data");
-    });
   }
 
   pprint(data) {
@@ -302,7 +291,7 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('chat'),
+        title: Text('prabhu chat'),
         /*actions: <Widget>[
           PopupMenuButton<String>(
             offset: Offset(0.0, 60.0),
@@ -349,9 +338,6 @@ class _HomePageState extends State<HomePage> {
                                   : '',
                               index),
 
-                          // When a user taps the ListTile, navigate to the DetailScreen.
-                          // Notice that you're not only creating a DetailScreen, you're
-                          // also passing the current todo through to it.
                           onTap: () {
 
                           },
@@ -465,7 +451,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  _uploadImage() async {
+  /*_uploadImage() async {
     if (imageFile == null) {
 //      return _showSnackbar('Please select image');
       return;
@@ -505,14 +491,14 @@ class _HomePageState extends State<HomePage> {
 //      Navigator.pop(context);
 //      _showSnackbar('Image failed: $e');
     }
-  }
+  }*/
 
-  _selectGalleryImage() async {
+  /*_selectGalleryImage() async {
     imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
       _uploadImage();
     });
-  }
+  }*/
 
   /*void choiceAction(String choice) {
     if(choice == Constants.settings){
@@ -525,8 +511,10 @@ class _HomePageState extends State<HomePage> {
   }*/
 }
 
+/*
 List<int> compress(List<int> bytes) {
   var image = img.decodeImage(bytes);
   var resize = img.copyResize(image, width: 480);
   return img.encodePng(resize, level: 1);
 }
+*/
