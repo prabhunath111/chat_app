@@ -1,9 +1,4 @@
 import 'package:multi_image/sendOrReceive.dart';
-import 'package:path/path.dart' as path;
-import 'package:http/http.dart' as http;
-// import 'package:image/image.dart' as img;
-// import 'package:image/image.dart';
-import 'package:image_picker/image_picker.dart' as img;
 import 'dart:io';
 import 'package:keyboard_visibility/keyboard_visibility.dart';
 import 'package:emoji_picker/emoji_picker.dart';
@@ -13,26 +8,21 @@ import 'package:adhara_socket_io/adhara_socket_io.dart';
 import 'package:progress_dialog/progress_dialog.dart';
 import 'package:flutter/services.dart';
 
-
 void main() => runApp(MaterialApp(
-  debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: false,
       home: HomePage(),
     ));
-
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
 }
-
 class _HomePageState extends State<HomePage> {
   ProgressDialog pr;
   File imageFile;
 //  static const String URI = "http://192.168.29.152:5000/";
 //  static const baseUrl = 'http://192.168.29.152:9000';
-
   static const String URI = "https://prabhu-socket.herokuapp.com/";
   static const baseUrl = 'https://prabhu-file.herokuapp.com';
-
   SocketIO socket;
   TextEditingController _textEditingController = new TextEditingController();
   ScrollController _scrollController = new ScrollController();
@@ -53,7 +43,6 @@ class _HomePageState extends State<HomePage> {
     manager = SocketIOManager();
     initSocket("default");
     myFocusNode = FocusNode();
-
     KeyboardVisibilityNotification().addNewListener(
       onChange: (bool visible) {
         if (visible == true) {
@@ -64,13 +53,10 @@ class _HomePageState extends State<HomePage> {
         print('vis $visible');
       },
     );
-
   }
-
   _scrollToBottom() {
     _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
   }
-
   initSocket(String identifier) async {
     setState(() => _isProbablyConnected[identifier] = true);
     socket = await manager.createInstance(SocketOptions(
@@ -111,11 +97,13 @@ class _HomePageState extends State<HomePage> {
       sendOrReceive.isFileReceive = data.contains('http');
 
 //      sendOrReceive.isSend = false;
-     /*
+      /*
      I am comparing here last msg in db and coming msg from server, is both are same it will not be added
       This is not a good way but it's temporary ok, i have to fix it ASAP.
       */
-      sentOrReceiveMessages.add((a.sentOrReceive==sendOrReceive.sentOrReceive)?'':sendOrReceive);
+      sentOrReceiveMessages.add((a.sentOrReceive == sendOrReceive.sentOrReceive)
+          ? ''
+          : sendOrReceive);
       return pprint(data);
     });
     socket.connect();
@@ -135,7 +123,7 @@ class _HomePageState extends State<HomePage> {
     var sendOrReceive = new SendOrReceive();
     sendOrReceive.sentOrReceive = sendingMessage;
     sendOrReceive.isSend = true;
-    sendOrReceive.isFile = sendingMessage.contains('http');
+    // sendOrReceive.isFile = sendingMessage.contains('http');
 
     if (sockets[identifier] != null) {
       pprint("sending message from '$identifier'...");
@@ -226,17 +214,16 @@ class _HomePageState extends State<HomePage> {
                   (sentOrReceiveMessages.isSend) ? Colors.blue : Colors.white),
           child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child:
-            Stack(
+            child: Stack(
               children: <Widget>[
                 Container(
                   margin: EdgeInsets.all(16.0),
                   child: Center(
                       child: CircularProgressIndicator(
-                        strokeWidth: 4.0,
-                        value: 20.0,
-                        backgroundColor: Colors.grey,
-                      )),
+                    strokeWidth: 4.0,
+                    value: 20.0,
+                    backgroundColor: Colors.grey,
+                  )),
                 ),
                 Center(
                     child: Image.network(
@@ -269,8 +256,7 @@ class _HomePageState extends State<HomePage> {
           child: Padding(
             padding: const EdgeInsets.only(
                 right: 8.0, top: 8.0, bottom: 8.0, left: 8.0),
-            child:
-            Text(sentOrReceiveMessages.sentOrReceive),
+            child: Text(sentOrReceiveMessages.sentOrReceive),
           ),
         ),
       );
@@ -286,31 +272,18 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+
     WidgetsBinding.instance.addPostFrameCallback((_) => _scrollToBottom());
     bool ipc = isProbablyConnected('default');
 
     return Scaffold(
       appBar: AppBar(
         title: Text('prabhu chat'),
-        /*actions: <Widget>[
-          PopupMenuButton<String>(
-            offset: Offset(0.0, 60.0),
-            onSelected: choiceAction,
-            itemBuilder: (BuildContext context){
-              return Constants.choices.map((String choice){
-                return PopupMenuItem<String>(
-                  value: choice,
-                  child: Text(choice),
-                );
-              }).toList();
-            },
-          )
-        ],*/
       ),
       body: new GestureDetector(
-        onTap: (){
+        onTap: () {
           setState(() {
-            SendOrReceive.isEmoji = false ;
+            SendOrReceive.isEmoji = false;
             SystemChannels.textInput.invokeMethod('TextInput.hide');
           });
         },
@@ -337,11 +310,8 @@ class _HomePageState extends State<HomePage> {
                                   ? sentOrReceiveMessages[index]
                                   : '',
                               index),
-
-                          onTap: () {
-
-                          },
-                          onLongPress: (){
+                          onTap: () {},
+                          onLongPress: () {
                             var alertDialog = AlertDialog(
                               title: Text("want delete"),
                               content: Text("Sure!"),
@@ -374,19 +344,11 @@ class _HomePageState extends State<HomePage> {
                             icon: Icon(Icons.insert_emoticon),
                             onPressed: () {
                               setState(() {
-                                FocusScope.of(context).requestFocus(new FocusNode());
-                                SendOrReceive.isEmoji = true ;
-                              });
-                            }),
-                        /*IconButton(
-                            icon: Icon(Icons.attach_file),
-                            onPressed: () {
-                              setState(() {
                                 FocusScope.of(context)
                                     .requestFocus(new FocusNode());
-                                _selectGalleryImage();
+                                SendOrReceive.isEmoji = true;
                               });
-                            }),*/
+                            }),
                         Expanded(
                           child: Container(
                             width: MediaQuery.of(context).size.width,
@@ -399,9 +361,11 @@ class _HomePageState extends State<HomePage> {
                                       ? () {
                                           if (sendingMessage.isNotEmpty) {
                                             setState(() {
-                                              FocusScope.of(context).requestFocus(myFocusNode);
-                                              SystemChannels.textInput.invokeMethod('TextInput.hide');
-
+                                              FocusScope.of(context)
+                                                  .requestFocus(myFocusNode);
+                                              SystemChannels.textInput
+                                                  .invokeMethod(
+                                                      'TextInput.hide');
                                               return sendMessage('default');
                                             });
                                           }
@@ -436,8 +400,8 @@ class _HomePageState extends State<HomePage> {
                           onEmojiSelected: (emoji, category) {
                             print('EMOJI ${emoji.emoji}');
                             setState(() {
-                              sendingMessage =
-                                  _textEditingController.text += emoji.emoji.toString();
+                              sendingMessage = _textEditingController.text +=
+                                  emoji.emoji.toString();
                             });
                           },
                         ),
@@ -450,71 +414,4 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-
-  /*_uploadImage() async {
-    if (imageFile == null) {
-//      return _showSnackbar('Please select image');
-      return;
-    }
-
-    try {
-      final url = Uri.parse('$baseUrl/upload');
-      final fileName = path.basename(imageFile.path);
-      final bytes = await compute(compress, imageFile.readAsBytesSync());
-
-      var request = http.MultipartRequest('POST', url)
-        ..files.add(
-          new http.MultipartFile.fromBytes(
-            'image',
-            bytes,
-            filename: fileName,
-          ),
-        );
-
-      var response = await request.send();
-      decodedUrl = await response.stream.bytesToString().then(json.decode);
-//      Navigator.pop(context);
-      if (response.statusCode == HttpStatus.OK) {
-        print('image URL = $baseUrl/${decodedUrl['path']}');
-        print('image response = ${decodedUrl['url']}');
-
-        sendingMessage = '$baseUrl/${decodedUrl['path']}';
-        sendMessage('default');
-
-//        sendMessage('$baseUrl/${decoded['path']}');
-//        _showSnackbar('Image uploaded, imageUrl = $baseUrl/${decoded['path']}');
-      } else {
-//        _showSnackbar('Image failed: ${decoded['message']}');
-      }
-    } catch (e) {
-      print('e2e $e');
-//      Navigator.pop(context);
-//      _showSnackbar('Image failed: $e');
-    }
-  }*/
-
-  /*_selectGalleryImage() async {
-    imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      _uploadImage();
-    });
-  }*/
-
-  /*void choiceAction(String choice) {
-    if(choice == Constants.settings){
-      print('Settings');
-    }else if(choice == Constants.subscribe){
-      print('Subscribe');
-    }else if(choice == Constants.signOut){
-      print('SignOut');
-    }
-  }*/
 }
-
-/*
-List<int> compress(List<int> bytes) {
-  var image = img.decodeImage(bytes);
-  var resize = img.copyResize(image, width: 480);
-  return img.encodePng(resize, level: 1);
-}
-*/
